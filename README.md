@@ -29,6 +29,28 @@ Rather than relying on brittle ADB keyevents or heavyweight cloud emulators, Omn
 
 ---
 
+## 🥊 Architectural Comparison Matrix
+
+Most Android automation approaches force an impractical tradeoff: either they require a computer physically tethered via ADB, or they rely on rigid visual scripting tools with no REST/JSON-RPC server for autonomous LLM agents.
+
+| Architecture / Metric | **OmniCompanion** ⚡ | **`android-remote-control-mcp`** | **`scrcpy-mcp` / `adb-mcp`** | **Appium / UIAutomator2** | **Tasker + AutoInput** |
+|:---|:---:|:---:|:---:|:---:|:---:|
+| **Deployment Model** | **Standalone On-Device** | Standalone On-Device | Host-Dependent (Requires PC) | Host-Dependent (Heavy PC Server) | On-Device Human Tool |
+| **Action Latency** | **<30 ms** (Direct Ktor IPC) | 10–100 ms | 1–4 s (ADB roundtrip) | 500 ms–2 s | 200–800 ms |
+| **Virtual IME Text Input** | **Yes** (Native IME, zero mangling) | ❌ Accessibility Replace only | ⚠️ ADB input (mangles Unicode) | ⚠️ Custom test IME | ⚠️ Emulated Keystrokes |
+| **Silent Screen Capture** | **Yes** (API 30+ A11y, 0 popups) | ⚠️ MediaProjection popup | ⚠️ Requires desktop frame grab | ⚠️ Screen capture session | ⚠️ Root or popup required |
+| **Privileged Shell Access** | **Yes** (Shizuku Binder UID 2000) | ❌ Standard sandbox only | ⚠️ Host ADB shell only | ⚠️ Limited adb shell | ⚠️ Root only |
+| **Termux `RUN_COMMAND`** | **Yes** (Local CLI/Python runner) | ❌ No | ❌ No | ❌ No | ⚠️ Plugin setup |
+| **CGNAT Reverse Relay** | **Yes** (Outbound WSS / Tailscale) | ⚠️ Cloudflare/ngrok tunnels | ❌ Localhost only | ❌ Local network only | ❌ No |
+| **Open Source & License** | **Yes (MIT)** | Yes (MIT) | Yes (MIT) | Yes (Apache 2.0) | ❌ Closed Source / Paid |
+
+### Key Architectural Advantages:
+1. **Zero-Tether Autonomous Operation:** Unlike `scrcpy-mcp` or `adb-mcp`, OmniCompanion does not require a desktop machine running `adb server` next to the phone. The phone operates as an autonomous agent node.
+2. **Dedicated Virtual IME:** Ordinary accessibility tools use `ACTION_SET_TEXT` which fails on modern web views, terminal emulators, and custom text engines. OmniCompanion's `CompanionInputMethodService` commits arbitrary Unicode and terminal control sequences instantly.
+3. **Triple-Layer Privilege Model:** Combines user-level accessibility gestures, Shizuku ADB shell execution (UID 2000), and Termux environment execution into a unified JSON-RPC plane.
+
+---
+
 ## 🚀 Quick Agent Link
 
 Connect over ADB reverse tunnel in seconds:

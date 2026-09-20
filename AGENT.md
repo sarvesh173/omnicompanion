@@ -125,7 +125,27 @@ curl -s -X POST http://127.0.0.1:8788/api/shizuku/exec \\
 
 ### Termux RUN_COMMAND Bridge
 ```bash
-curl -s -X POST http://127.0.0.1:8788/api/termux/run \\
-  -H "Content-Type: application/json" \\
+curl -s -X POST http://127.0.0.1:8788/api/termux/run \
+  -H "Content-Type: application/json" \
   -d '{"command": "python app.py", "background": true}'
 ```
+
+---
+
+## 4. Autonomous Agent Execution Loop
+
+When automating UI workflows, follow the closed-loop cycle:
+
+```
+[Capture Screenshot] ──> [LLM Vision / OCR] ──> [Compute Coordinates]
+        ▲                                              │
+        │                                              ▼
+[Verify UI Change]  <── [Inject Text (IME)] <── [Execute Tap/Swipe]
+```
+
+1. **Observe:** Call `GET /api/screenshot` to fetch current viewport buffer.
+2. **Decide:** Compute target `(x, y)` pixel coordinates from vision analysis.
+3. **Act:** Issue `POST /api/action/tap` to activate UI target.
+4. **Type:** If input focus is required, dispatch `POST /api/action/type` with payload.
+5. **Confirm:** Re-fetch screenshot after 200 ms to confirm DOM transition.
+
