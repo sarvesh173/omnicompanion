@@ -9,6 +9,27 @@
 
 ---
 
+## 🛠️ Agent-Assisted Installation Protocol (Human vs. Agent)
+
+OmniCompanion is designed with strict separation of responsibility between human setup and autonomous agent execution:
+
+### 👤 What the Human Does (30 Seconds):
+1. **Enable USB Debugging:** Settings → System → Developer Options → USB Debugging (ON).
+2. **Connect Device:** Plug the phone into the computer via USB (or pair via Wireless Debugging).
+3. **Pass to Agent:** Hand this repository link to your AI agent (Claude Code, Hermes, Cursor, OpenCode):
+   > *"Agent, install and bootstrap OmniCompanion on my connected phone."*
+
+### 🤖 What the Agent Does (Fully Autonomous):
+1. Detect device: `adb devices`
+2. Download or pull APK: `curl -sL <apk_url> -o /tmp/omnicompanion.apk`
+3. Install silently: `adb install -r /tmp/omnicompanion.apk`
+4. Setup port forward: `adb forward tcp:8788 tcp:8788`
+5. Grant 40+ permissions via batch shell (see Section 2 below).
+6. Launch foreground service: `adb shell am start-foreground-service -n com.personal.omnicompanion/.service.CompanionForegroundService`
+7. Confirm telemetry: `curl -s http://127.0.0.1:8788/api/status`
+
+---
+
 ## 1. Connectivity Topology
 
 OmniCompanion runs an internal HTTP & WebSocket automation server on port `8788`.

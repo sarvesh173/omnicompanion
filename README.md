@@ -56,19 +56,20 @@ Most Android automation approaches force an impractical tradeoff: either they re
 
 ---
 
-## 🚀 Quick Agent Link
+## 🚀 Quick Agent Link & Automated Installation
 
-Connect over ADB reverse tunnel in seconds:
+OmniCompanion splits setup into human connection and agent automation:
+
+1. **Human Action:** Turn on USB Debugging in Developer Options and plug the phone into your computer.
+2. **Agent Action:** Give your agent this repo URL. The agent runs `adb install`, forwards port 8788, batch-grants all permissions, and starts the automation service.
 
 ```bash
-# Forward port 8788 from phone to host
+# Verify connection
 adb forward tcp:8788 tcp:8788
-
-# Check device telemetry
 curl -s http://127.0.0.1:8788/api/status
 ```
 
-For complete machine instructions, JSON schemas, and bootstrap commands, read [**AGENT.md**](AGENT.md).
+For full automated setup scripts and JSON schemas, see [**AGENT.md**](AGENT.md).
 
 ---
 
